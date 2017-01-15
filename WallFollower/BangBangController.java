@@ -1,11 +1,16 @@
 package wallFollower;
+
+import java.util.concurrent.TimeUnit;
+
 import lejos.hardware.motor.*;
 
 public class BangBangController implements UltrasonicController{
 	private final int bandCenter, bandwidth;
 	private final int motorLow, motorHigh;
-	private int distance;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
+	private int filterControl;
+	private final int FILTER_OUT = 20;
+	private int FilteredDistance;
 	
 	public BangBangController(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
 							  int bandCenter, int bandwidth, int motorLow, int motorHigh) {
@@ -24,12 +29,82 @@ public class BangBangController implements UltrasonicController{
 	
 	@Override
 	public void processUSData(int distance) {
-		this.distance = distance;
-		// TODO: process a movement based on the us distance passed in (BANG-BANG style)
+		
+		//Filter
+		
+		if(distance == 21474)
+			FilteredDistance=bandCenter;
+		else if (distance >= bandCenter+40 && filterControl < FILTER_OUT) {
+			// bad value, do not set the distance var, however do increment the
+			// filter value
+			filterControl++;
+		} else if (distance >= bandCenter+40 && filterControl > FILTER_OUT) {
+			// We have repeated large values, so there must actually be nothing
+			// there: leave the distance alone
+			FilteredDistance = distance;
+		}	
+		 else {
+			// distance went below 255: reset filter and leave
+			// distance alone.
+			filterControl = 0;
+			FilteredDistance = distance;
+		}
+
+		
+		int distError=FilteredDistance-bandCenter;
+		
+		if(FilteredDistance>=120){
+			
+
+			leftMotor.setSpeed(motorHigh);
+			rightMotor.setSpeed(motorHigh);
+			leftMotor.forward();
+			rightMotor.forward();
+			
+				try {
+					TimeUnit.MILLISECONDS.sleep(650);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			
+				if(FilteredDistance>=120) {
+					
+						leftMotor.setSpeed(motorLow);
+						rightMotor.setSpeed(motorHigh);
+						leftMotor.forward();
+						rightMotor.forward();
+						
+				
+				try {
+					TimeUnit.MILLISECONDS.sleep(750);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				}	
+		}
+		
+		if(Math.abs(distError)<=bandwidth){
+			leftMotor.setSpeed(motorHigh);
+			rightMotor.setSpeed(motorHigh);
+			leftMotor.forward();
+			rightMotor.forward();
+		}
+		else if(distError>0){
+			leftMotor.setSpeed(motorLow);
+			rightMotor.setSpeed(motorHigh);
+			leftMotor.forward();
+			rightMotor.forward();
+		}
+		else if(distError<0){
+			leftMotor.setSpeed(motorHigh);
+			rightMotor.setSpeed(motorLow);
+			leftMotor.forward();
+			rightMotor.forward();
+		}
 	}
 
 	@Override
 	public int readUSDistance() {
-		return this.distance;
+		return FilteredDistance;
 	}
 }
