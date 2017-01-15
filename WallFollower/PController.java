@@ -1,13 +1,16 @@
 package wallFollower;
+import java.util.concurrent.TimeUnit;
+
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class PController implements UltrasonicController {
 	
 	private final int bandCenter, bandwidth;
-	private final int motorStraight = 200, FILTER_OUT = 20;
+	private final int motorStraight = 300, FILTER_OUT = 20;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private int distance;
 	private int filterControl;
+	int FilteredDistance;
 	
 	public PController(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
 					   int bandCenter, int bandwidth) {
@@ -26,33 +29,85 @@ public class PController implements UltrasonicController {
 	@Override
 	public void processUSData(int distance) {
 
-		// rudimentary filter - toss out invalid samples corresponding to null
-		// signal.
-		// (n.b. this was not included in the Bang-bang controller, but easily
-		// could have).
-		//
-		if (distance >= 255 && filterControl < FILTER_OUT) {
+		if(distance == 21474)
+			FilteredDistance=bandCenter;
+		else if (distance >= bandCenter+40 && filterControl < FILTER_OUT) {
 			// bad value, do not set the distance var, however do increment the
 			// filter value
 			filterControl++;
-		} else if (distance >= 255) {
+		} else if (distance >= bandCenter+40 && filterControl > FILTER_OUT) {
 			// We have repeated large values, so there must actually be nothing
 			// there: leave the distance alone
-			this.distance = distance;
-		} else {
+			FilteredDistance = distance;
+		}	
+		 else {
 			// distance went below 255: reset filter and leave
 			// distance alone.
 			filterControl = 0;
-			this.distance = distance;
+			FilteredDistance = distance;
 		}
 
-		// TODO: process a movement based on the us distance passed in (P style)
+		
+		int distError=FilteredDistance-bandCenter;
+		int deltaspeed=Math.abs(distError*15);
+		
+		if (deltaspeed>150)
+			deltaspeed=150;
+		
+		/*if(FilteredDistance>=120){
+			
+
+			leftMotor.setSpeed(motorStraight);
+			rightMotor.setSpeed(motorStraight);
+			leftMotor.forward();
+			rightMotor.forward();
+			
+				try {
+					TimeUnit.MILLISECONDS.sleep(650);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			
+				if(FilteredDistance>=120) {
+					
+						leftMotor.setSpeed(motorStraight-deltaspeed);
+						rightMotor.setSpeed(motorStraight);
+						leftMotor.forward();
+						rightMotor.forward();
+						
+				
+				try {
+					TimeUnit.MILLISECONDS.sleep(750);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				}	
+		}*/
+		
+		if(Math.abs(distError)<=bandwidth){
+			leftMotor.setSpeed(motorStraight);
+			rightMotor.setSpeed(motorStraight);
+			leftMotor.forward();
+			rightMotor.forward();
+		}
+		else if(distError>0){
+			leftMotor.setSpeed(motorStraight-deltaspeed);
+			rightMotor.setSpeed(motorStraight+deltaspeed);
+			leftMotor.forward();
+			rightMotor.forward();
+		}
+		else if(distError<0){
+			leftMotor.setSpeed(motorStraight+deltaspeed);
+			rightMotor.setSpeed(motorStraight-deltaspeed);
+			leftMotor.forward();
+			rightMotor.forward();
+		}
 	}
 
 	
 	@Override
 	public int readUSDistance() {
-		return this.distance;
+		return FilteredDistance;
 	}
 
 }
