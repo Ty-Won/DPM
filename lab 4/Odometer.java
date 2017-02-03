@@ -25,7 +25,6 @@
  * The odometer is initalized to 90 degrees, assuming the robot is facing up the positive y-axis
  * 
  */
-
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
