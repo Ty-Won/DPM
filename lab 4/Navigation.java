@@ -1,5 +1,4 @@
-/*
- * File: Navigation.java
+* File: Navigation.java
  * Written by: Sean Lawlor
  * ECSE 211 - Design Principles and Methods, Head TA
  * Fall 2011
@@ -111,6 +110,7 @@ public class Navigation {
 		}
 	}
 	
+	
 	/*
 	 * Go foward a set distance in cm
 	 */
@@ -119,3 +119,4 @@ public class Navigation {
 
 	}
 }
+
