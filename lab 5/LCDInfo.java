@@ -12,15 +12,15 @@ public class LCDInfo implements TimerListener{
 	
 	// arrays for displaying data
 	private double [] pos;
-	private float[] usData;
 	
-	public LCDInfo(Odometer odo, float[] usData) {
+	
+	public LCDInfo(Odometer odo) {
 		this.odo = odo;
 		this.lcdTimer = new Timer(LCD_REFRESH, this);
 		
 		// initialise the arrays for displaying data
 		pos = new double [3];
-		this.usData=usData;
+		
 		
 		// start the timer
 		lcdTimer.start();
@@ -36,6 +36,6 @@ public class LCDInfo implements TimerListener{
 		LCD.drawInt((int)(pos[0] * 10), 3, 0);
 		LCD.drawInt((int)(pos[1] * 10), 3, 1);
 		LCD.drawInt((int)pos[2], 3, 2);
-		LCD.drawInt((int)usData[0], 3, 3);
+		
 	}
 }
