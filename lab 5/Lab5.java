@@ -1,9 +1,6 @@
 import lejos.hardware.*;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.Port;
-import lejos.hardware.sensor.*;
-import lejos.robotics.SampleProvider;
 import lejos.hardware.lcd.TextLCD;
 
 public class Lab5 {
@@ -16,13 +13,14 @@ public class Lab5 {
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 	private static final EV3LargeRegulatedMotor catapultL = new	EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 	private static final EV3LargeRegulatedMotor catapultR = new	EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-	public static Kobe threepointer=new Kobe(leftMotor,rightMotor,catapultL,catapultR);
+	
 	
 	public static void main(String[] args) {
 		
+		Kobe threepointer=new Kobe(leftMotor,rightMotor,catapultL,catapultR);
 		final TextLCD t= LocalEV3.get().getTextLCD();
 		
-		do {
+		
 			// clear the display
 			t.clear();
 
@@ -31,8 +29,11 @@ public class Lab5 {
 			
 
 			buttonChoice = Button.waitForAnyPress();
-		}while(buttonChoice!= Button.ID_LEFT
-				&& buttonChoice != Button.ID_RIGHT && buttonChoice!=Button.ID_ENTER);
+			
+			t.clear();
+			
+			t.drawString("Press for", 0, 1);
+			t.drawString("another shot", 0, 2);
 		
 		
 		

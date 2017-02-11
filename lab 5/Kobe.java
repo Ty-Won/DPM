@@ -4,13 +4,11 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 
 public class Kobe {
-	private static final int ROTATE_SPEED = 150;
-	
-	
-	public EV3LargeRegulatedMotor leftMotor;
-	public EV3LargeRegulatedMotor rightMotor;
-	public EV3LargeRegulatedMotor catapultR;
-	public EV3LargeRegulatedMotor catapultL;
+	public static int ROTATE_SPEED = 150;
+	private EV3LargeRegulatedMotor leftMotor;
+	private EV3LargeRegulatedMotor rightMotor;
+	private EV3LargeRegulatedMotor catapultR;
+	private EV3LargeRegulatedMotor catapultL;
 	int launchSpeed;
 	int launchAngle=90;
 	public static double WHEEL_RADIUS = 2.1;
@@ -21,7 +19,7 @@ public class Kobe {
 	//angle orientation
 	double Orientation;
 	
-	public Kobe(EV3LargeRegulatedMotor leftmotor, EV3LargeRegulatedMotor rightmotor,EV3LargeRegulatedMotor catapultL,EV3LargeRegulatedMotor catapultR) {
+	public Kobe(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,EV3LargeRegulatedMotor catapultL,EV3LargeRegulatedMotor catapultR) {
 		this.leftMotor=leftMotor;
 		this.rightMotor=rightMotor;
 		this.catapultL=catapultL;
@@ -55,22 +53,26 @@ public class Kobe {
 	}
 	
 	public void leftShot(){
-		Orientation=Math.atan(-1/3);
-		leftMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, Math.toDegrees(Orientation)), true);
-		rightMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, Math.toDegrees(Orientation)), false);
+		Orientation=Math.atan2(-1, 3);
+				
+		
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
+
+		
+		leftMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK,Math.toDegrees(Orientation)), true);
+		rightMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK,Math.toDegrees(Orientation)), false);
 		
 		catapultL.setSpeed(1000);
 		catapultR.setSpeed(1000);
 		do{
 			//throw
-			catapultL.rotate(launchAngle,false);
-			catapultR.rotate(launchAngle,true);
-			
-			//return to launch position
 			catapultL.rotate(-launchAngle,false);
 			catapultR.rotate(-launchAngle,true);
+			
+			//return to launch position
+			catapultL.rotate(launchAngle,false);
+			catapultR.rotate(launchAngle,true);
 		
 			buttonChoice = Button.waitForAnyPress();
 			
@@ -83,13 +85,14 @@ public class Kobe {
 	
 	public void rightShot(){
 		
-		Orientation=Math.atan(1/3);
+		Orientation=Math.atan2(1, 3);;
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.setSpeed(ROTATE_SPEED);
 		leftMotor.rotate(convertAngle(WHEEL_RADIUS, TRACK, Math.toDegrees(Orientation)), true);
 		rightMotor.rotate(-convertAngle(WHEEL_RADIUS, TRACK, Math.toDegrees(Orientation)), false);
 		catapultL.setSpeed(1000);
 		catapultR.setSpeed(1000);
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
+		
 		
 		do{
 			//throw
@@ -115,6 +118,7 @@ public class Kobe {
 	
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
+		
 	}
 
 	private static int convertAngle(double radius, double width, double angle) {
