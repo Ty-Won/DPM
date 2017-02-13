@@ -12,12 +12,12 @@ public class Lab5 {
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 	private static final EV3LargeRegulatedMotor catapultL = new	EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-	private static final EV3LargeRegulatedMotor catapultR = new	EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	
 	
 	
 	public static void main(String[] args) {
 		
-		Kobe threepointer=new Kobe(leftMotor,rightMotor,catapultL,catapultR);
+		Kobe threepointer=new Kobe(leftMotor,rightMotor,catapultL);
 		final TextLCD t= LocalEV3.get().getTextLCD();
 		
 		
@@ -33,7 +33,7 @@ public class Lab5 {
 			t.clear();
 			
 			t.drawString("Press for", 0, 1);
-			t.drawString("another shot", 0, 2);
+			t.drawString("  shot", 0, 2);
 		
 		
 		
