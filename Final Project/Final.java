@@ -5,7 +5,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.*;
 import lejos.robotics.SampleProvider;
 
-public class Lab4 {
+public class Final {
 
 	// Static Resources:
 	// Left motor connected to output A
